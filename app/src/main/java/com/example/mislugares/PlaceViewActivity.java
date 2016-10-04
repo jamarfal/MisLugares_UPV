@@ -1,9 +1,15 @@
 package com.example.mislugares;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -12,9 +18,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mislugares.model.Lugar;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -23,9 +32,13 @@ import java.util.Date;
  */
 
 public class PlaceViewActivity extends AppCompatActivity {
-    public static final int REQUEST_CODE = 1234;
     private long id;
     private Lugar lugar;
+    private ImageView imageView;
+    final static int RESULTADO_EDITAR = 1;
+    final static int RESULTADO_GALERIA = 2;
+    final static int RESULTADO_FOTO = 3;
+    private Uri uriFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +49,7 @@ public class PlaceViewActivity extends AppCompatActivity {
         id = extras.getLong(ScrollingActivity.PLACE_ID, -1);
         lugar = ScrollingActivity.lugares.elemento((int) id);
 
+        imageView = (ImageView) findViewById(R.id.foto);
         updateViews();
     }
 
@@ -98,6 +112,8 @@ public class PlaceViewActivity extends AppCompatActivity {
                         lugar.setValoracion(valor);
                     }
                 });
+
+        ponerFoto(imageView, lugar.getFoto());
     }
 
     @Override
@@ -132,9 +148,16 @@ public class PlaceViewActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == RESULTADO_EDITAR) {
             updateViews();
             findViewById(R.id.scrollView1).invalidate();
+        } else if (requestCode == RESULTADO_GALERIA
+                && resultCode == Activity.RESULT_OK) {
+            lugar.setFoto(data.getDataString());
+            ponerFoto(imageView, lugar.getFoto());
+        } else if (requestCode == RESULTADO_FOTO && resultCode == Activity.RESULT_OK && lugar != null && uriFoto != null) {
+            lugar.setFoto(uriFoto.toString());
+            ponerFoto(imageView, lugar.getFoto());
         }
     }
 
@@ -154,7 +177,7 @@ public class PlaceViewActivity extends AppCompatActivity {
     private void goToEditPlaceActivity() {
         Intent intent = new Intent(this, EditPlaceActivity.class);
         intent.putExtra(ScrollingActivity.PLACE_ID, id);
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent, RESULTADO_EDITAR);
     }
 
     public void deletePlace(final int id) {
@@ -179,5 +202,52 @@ public class PlaceViewActivity extends AppCompatActivity {
     public void pgWeb(View view) {
         startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse(lugar.getUrl())));
+    }
+
+    public void galeria(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, RESULTADO_GALERIA);
+    }
+
+    protected void ponerFoto(ImageView imageView, String uri) {
+        if (uri != null) {
+            imageView.setImageBitmap(reduceBitmap(this, uri, 1024, 1024));
+        } else {
+            imageView.setImageBitmap(null); // No se representa ninguna imagen
+        }
+    }
+
+    public void tomarFoto(View view) {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        uriFoto = Uri.fromFile(new File(
+                Environment.getExternalStorageDirectory() + File.separator
+                        + "img_" + (System.currentTimeMillis() / 1000) + ".jpg"));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriFoto);
+        startActivityForResult(intent, RESULTADO_FOTO);
+    }
+
+    public void eliminarFoto(View view) {
+        lugar.setFoto(null);
+        ponerFoto(imageView, null);
+    }
+
+    public static Bitmap reduceBitmap(Context contexto, String uri, int maxAncho, int maxAlto) {
+        try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(contexto.getContentResolver()
+                    .openInputStream(Uri.parse(uri)), null, options);
+            options.inSampleSize = (int) Math.max(
+                    Math.ceil(options.outWidth / maxAncho),
+                    Math.ceil(options.outHeight / maxAlto));
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeStream(contexto.getContentResolver().openInputStream(Uri.parse(uri)), null, options);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(contexto, "Fichero/recurso no encontrado",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            return null;
+        }
     }
 }
