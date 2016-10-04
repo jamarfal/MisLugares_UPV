@@ -2,6 +2,7 @@ package com.example.mislugares;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -109,8 +110,14 @@ public class PlaceViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.share_action_menu:
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT,
+                        lugar.getNombre() + " - " + lugar.getUrl());
+                startActivity(intent);
                 return true;
             case R.id.how_go_action_menu:
+                verMapa(null);
                 return true;
             case R.id.edit_action_menu:
                 goToEditPlaceActivity();
@@ -131,6 +138,19 @@ public class PlaceViewActivity extends AppCompatActivity {
         }
     }
 
+    public void verMapa(View view) {
+        Uri uri;
+        double lat = lugar.getPosicion().getLatitud();
+        double lon = lugar.getPosicion().getLongitud();
+        if (lat != 0 || lon != 0) {
+            uri = Uri.parse("geo:" + lat + "," + lon);
+        } else {
+            uri = Uri.parse("geo:0,0?q=" + lugar.getDireccion());
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
     private void goToEditPlaceActivity() {
         Intent intent = new Intent(this, EditPlaceActivity.class);
         intent.putExtra(ScrollingActivity.PLACE_ID, id);
@@ -149,5 +169,15 @@ public class PlaceViewActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    public void llamadaTelefono(View view) {
+        startActivity(new Intent(Intent.ACTION_DIAL,
+                Uri.parse("tel:" + lugar.getTelefono())));
+    }
+
+    public void pgWeb(View view) {
+        startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse(lugar.getUrl())));
     }
 }

@@ -40,7 +40,7 @@ public class ScrollingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ScrollingActivity.this, PlaceViewActivity.class);
-                i.putExtra("id", (long) recyclerView.getChildAdapterPosition(v));
+                i.putExtra(PLACE_ID, (long) recyclerView.getChildAdapterPosition(v));
                 startActivity(i);
             }
         });
