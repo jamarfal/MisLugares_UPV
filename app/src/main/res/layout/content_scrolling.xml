@@ -8,35 +8,5 @@
     tools:context="com.example.mislugares.ScrollingActivity"
     tools:showIn="@layout/activity_scrolling">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="30dp">
-
-        <Button
-            android:id="@+id/show_places_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_show_places" />
-
-        <Button
-            android:id="@+id/preferences_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_preferences" />
-
-        <Button
-            android:id="@+id/about_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_about" />
-
-        <Button
-            android:id="@+id/exit_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_exit" />
-    </LinearLayout>
+    <include layout="@layout/content_main" />
 </android.support.v4.widget.NestedScrollView>

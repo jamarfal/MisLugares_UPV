@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -19,22 +21,30 @@ import com.example.mislugares.model.LugaresVector;
 public class ScrollingActivity extends AppCompatActivity {
     public static final String PLACE_ID = "place_id";
     public static Lugares lugares = new LugaresVector();
+    private RecyclerView recyclerView;
+    public PlaceAdapter placeAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.content_scrolling);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        placeAdapter = new PlaceAdapter(lugares, this);
+        recyclerView.setAdapter(placeAdapter);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        placeAdapter.setOnItemClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                Intent i = new Intent(ScrollingActivity.this, PlaceViewActivity.class);
+                i.putExtra("id", (long) recyclerView.getChildAdapterPosition(v));
+                startActivity(i);
             }
         });
+
     }
 
     @Override
