@@ -8,7 +8,14 @@ import java.util.List;
  */
 public class LugaresVector implements Lugares {
 
+    public final static String TAG = "MisLugares";
+    public static GeoPunto posicionActual = new GeoPunto(0, 0);
+
     protected List<Lugar> vectorLugares = ejemploLugares();
+
+    public List<Lugar> getVectorLugares() {
+        return vectorLugares;
+    }
 
     public LugaresVector() {
         vectorLugares = ejemploLugares();

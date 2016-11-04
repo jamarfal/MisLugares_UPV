@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mislugares">
 
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_mi_icono"
@@ -21,7 +27,13 @@
         <activity
             android:name=".PlaceViewActivity"
             android:label="VistaLugar" />
-        <activity android:name=".EditPlaceActivity"></activity>
+        <activity android:name=".EditPlaceActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC4OAIK8jso8nP_pW3O6Xy18Hb0mvt1LBE" />
+
+        <activity android:name=".MapaActivity"></activity>
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 </manifest>

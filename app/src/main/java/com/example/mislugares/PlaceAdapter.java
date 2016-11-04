@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.example.mislugares.model.Lugar;
 import com.example.mislugares.model.Lugares;
+import com.example.mislugares.model.LugaresVector;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by jamarfal on 4/10/16.
@@ -36,7 +39,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
 
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nombre, direccion;
+        public TextView nombre, direccion, distancia;
         public ImageView foto;
         public RatingBar valoracion;
 
@@ -46,6 +49,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
             direccion = (TextView) itemView.findViewById(R.id.direccion);
             foto = (ImageView) itemView.findViewById(R.id.foto);
             valoracion = (RatingBar) itemView.findViewById(R.id.valoracion);
+            distancia = (TextView) itemView.findViewById(R.id.distancia);
         }
     }
 
@@ -105,6 +109,18 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         holder.foto.setImageResource(id);
         holder.foto.setScaleType(ImageView.ScaleType.FIT_END);
         holder.valoracion.setRating(lugar.getValoracion());
+
+        if (LugaresVector.posicionActual != null && lugar.getPosicion() != null) {
+            int d = (int) LugaresVector.posicionActual.distancia(lugar.getPosicion());
+            if (d < 2000) {
+                holder.distancia.setText(d + " m");
+
+            } else {
+                holder.distancia.setText(d / 1000 + " Km");
+
+            }
+
+        }
     }
 
     // Indicamos el número de elementos de la lista
