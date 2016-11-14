@@ -36,6 +36,7 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mapa = googleMap;
+        //Comentario
         mapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) ==

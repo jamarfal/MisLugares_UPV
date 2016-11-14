@@ -174,6 +174,5 @@ public class ScrollingActivity extends AppCompatActivity implements LocationList
     public void onStatusChanged(String proveedor, int estado, Bundle extras) {
         Log.d(LugaresVector.TAG, "Cambia estado: " + proveedor);
         activarProveedores();
-
     }
 }
